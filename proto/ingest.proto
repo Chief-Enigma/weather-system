@@ -1,0 +1,19 @@
+syntax = "proto3";
+package ingest;
+
+message Measurement {
+  string stationId = 1;
+  uint64 seqNo = 2;
+  int64 sourceTimestamp = 3; // epoch ms
+  double temperature = 4;     // °C
+  double humidity = 5;        // % (NaN wenn suspended)
+  double pressure = 6;        // hPa
+  bool isRaining = 7;         // Lidar-Derivat
+  string humidityStatus = 8;  // "active" | "suspended"
+}
+
+message IngestReply { bool accepted = 1; string reason = 2; }
+
+service DataIngestService {
+  rpc Push(Measurement) returns (IngestReply);
+}

@@ -1,0 +1,31 @@
+{
+  "name": "weather-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "dev:central": "tsx src/central/run-central.ts",
+    "dev:ingest": "tsx src/local-node/run-ingest.ts",
+    "dev:station": "tsx src/station/run-station.ts",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.0",
+    "@grpc/proto-loader": "^0.8.0",
+    "better-sqlite3": "^12.4.1",
+    "pino": "^10.1.0",
+    "prom-client": "^15.1.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.6"
+  }
+}
