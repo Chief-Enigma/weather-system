@@ -2,7 +2,7 @@ export type HumidityStatus = "active" | "suspended";
 export interface Measurement {
   stationId: string;
   seqNo: number;
-  sourceTimestamp: number; // epoch ms
+  sourceTimestamp: number; 
   temperature: number;
   humidity: number; // NaN wenn suspended
   pressure: number;

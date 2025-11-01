@@ -16,7 +16,6 @@ function floorToMinute(epochMs: number) {
   return Math.floor(epochMs / 60000) * 60000;
 }
 
-// Per Measurement aufrufen
 export function aggregateOnTheFly(m: {
   stationId: string;
   sourceTimestamp: number;
@@ -47,9 +46,4 @@ export function aggregateOnTheFly(m: {
     acc.humCount += 1;
   }
   return acc;
-}
-
-export function snapshotAndClearExpired(now = Date.now()) {
-  // Optional: hier könntest du alte Minutenfenster persistieren und aus Map entfernen
-  // Für den Prototyp lassen wir sie erstmal drin (geringer Speicherbedarf).
 }

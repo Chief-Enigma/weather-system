@@ -33,7 +33,7 @@ const centralClient: any = new (ingest as any).DataIngestService(
   credentials.createInsecure()
 );
 
-const seen = new Set<string>(); // einfache Idempotenz für den Prototyp
+const seen = new Set<string>(); 
 
 function forwardToCentral(m: any): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -70,8 +70,7 @@ async function Push(call: ServerUnaryCall<any, any>, cb: sendUnaryData<any>) {
     return cb(null, { accepted: true, reason: "ok" });
   } catch (e: any) {
     logger.error({ err: e?.message }, "forward failed");
-    // Wir melden dennoch ok zurück, aber markieren den Grund
-    ingestAccepted.inc(); // Ingest hat angenommen, Forwarding ist separat
+    ingestAccepted.inc(); 
     ingestLatency.observe(Date.now() - start);
     return cb(null, { accepted: true, reason: "forward-error" });
   }
@@ -84,7 +83,6 @@ export function startIngestServer(port = 50051) {
     if (err) throw err;
     logger.info({ port: p }, "DataIngestService started");
 
-    // Metrics + Health HTTP
     const httpPort = Number(process.env.INGEST_METRICS_PORT || 9101);
     const srv = http.createServer(async (req, res) => {
       if (req.url === "/metrics") {

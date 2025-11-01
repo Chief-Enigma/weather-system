@@ -5,7 +5,7 @@ export interface DbMeasurement {
   seqNo: number;
   sourceTimestamp: number;
   temperature: number;
-  humidity: number | null;   // NaN kommt als null rein
+  humidity: number | null;   
   pressure: number;
   isRaining: number;         // 0/1
   humidityStatus: "active" | "suspended";
@@ -38,7 +38,6 @@ export function save(m: DbMeasurement) {
   return insertStmt.run(m);
 }
 
-// ...bestehender Code oben bleibt...
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS aggregates (

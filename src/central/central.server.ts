@@ -5,8 +5,8 @@ import { loadPackageDefinition, Server, ServerCredentials } from "@grpc/grpc-js"
 import * as protoLoader from "@grpc/proto-loader";
 import { Counter, Histogram, register } from "prom-client";
 import { save } from "./storage";
-import { upsertAggregate } from "./storage"; // NEU
-import { aggregateOnTheFly } from "./aggregator"; // NEU
+import { upsertAggregate } from "./storage"; 
+import { aggregateOnTheFly } from "./aggregator"; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,17 +18,14 @@ const packageDef = protoLoader.loadSync(protoPath, {
 const grpcObj = loadPackageDefinition(packageDef);
 const ingest = (grpcObj as any).ingest;
 
-// Metrics
 const accepted = new Counter({ name: "central_ingest_accepted_total", help: "accepted msgs" });
 const latency = new Histogram({ name: "central_ingest_latency_ms", help: "ingest latency ms", buckets: [5,10,25,50,100,250,500,1000] });
 
-// gRPC handler
 function Push(call: any, cb: any) {
   const start = Date.now();
   const m = call.request;
 
   console.log(JSON.stringify({ level: 30, msg: "central received", stationId: m.stationId, seqNo: m.seqNo }));
-  // Persist (map null humidity)
   save({
     stationId: m.stationId,
     seqNo: Number(m.seqNo),
@@ -40,7 +37,6 @@ function Push(call: any, cb: any) {
     humidityStatus: m.humidityStatus,
   });
 
-    // Aggregate in-memory
   const acc = aggregateOnTheFly({
     stationId: m.stationId,
     sourceTimestamp: Number(m.sourceTimestamp),
@@ -48,7 +44,6 @@ function Push(call: any, cb: any) {
     humidity: m.humidity ?? null,
   });
 
-  // Persist aggregate snapshot (Upsert) – bei jedem Input aktualisieren
   upsertAggregate({
     stationId: acc.stationId,
     windowStart: acc.windowStart,
@@ -68,10 +63,8 @@ export function startCentral(port = Number(process.env.CENTRAL_PORT || 50052)) {
   server.addService(ingest.DataIngestService.service, { Push });
   server.bindAsync(`0.0.0.0:${port}`, ServerCredentials.createInsecure(), (err, boundPort) => {
     if (err) throw err;
-    // server.start(); // neuere grpc-js: nicht mehr nötig (Deprecation Warning vermeiden)
     console.log(JSON.stringify({ level: 30, msg: "Central started", port: boundPort }));
 
-    // Metrics + Health HTTP
     const httpPort = Number(process.env.METRICS_PORT || 9100);
     const srv = http.createServer(async (req, res) => {
       if (req.url === "/metrics") {
